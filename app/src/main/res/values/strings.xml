@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="menu_array">
+        <item>Новости</item>
+        <item>Расписание</item>
+        <item>Радио</item>
+        <item>Абитуриенту</item>
+        <item>Структура</item>
+        <item>Сайт</item>
+        <item>Настройки</item>
+    </string-array>
+
+    <string-array name="menu_array_images">
+        <item>news</item>
+        <item>rasp</item>
+        <item>radio</item>
+        <item>abit</item>
+        <item>struct</item>
+        <item>site</item>
+        <item>prefs</item>
+    </string-array>
 
     <string name="app_name">piInformer</string>
     <string name="title_section1">Section 1</string>
