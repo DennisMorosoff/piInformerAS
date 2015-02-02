@@ -47,7 +47,7 @@ public class NavigationDrawerFragment extends Fragment {
     final private String ITEM_MENU_TITLE = "title";
     final private String ITEM_MENU_ICON = "icon";
     final private String COUNT = "count";
-    public String[] mPageTitles; /* Массив заголовков страниц (меню) */
+
     int[] mItemsIcons = new int[]{R.drawable.ic_action_event,
             R.drawable.ic_action_go_to_today, R.drawable.ic_action_play,
             R.drawable.ic_action_person, R.drawable.ic_action_group,
@@ -109,7 +109,8 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        mPageTitles = getResources().getStringArray(R.array.menu_array);
+        /* Массив заголовков страниц (меню) */
+        String[] mPageTitles = getResources().getStringArray(R.array.menu_array);
 
         List<HashMap<String, String>> mList = new ArrayList<HashMap<String, String>>();
 
