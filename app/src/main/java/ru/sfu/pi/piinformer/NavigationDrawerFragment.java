@@ -20,7 +20,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -39,7 +44,14 @@ public class NavigationDrawerFragment extends Fragment {
      * expands it. This shared preference tracks this.
      */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+    final private String ITEM_MENU_TITLE = "title";
+    final private String ITEM_MENU_ICON = "icon";
+    final private String COUNT = "count";
     public String[] mPageTitles; /* Массив заголовков страниц (меню) */
+    int[] mItemsIcons = new int[]{R.drawable.ic_action_event,
+            R.drawable.ic_action_go_to_today, R.drawable.ic_action_play,
+            R.drawable.ic_action_person, R.drawable.ic_action_group,
+            R.drawable.ic_action_web_site, R.drawable.ic_action_settings};
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
@@ -55,7 +67,9 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
+
     public NavigationDrawerFragment() {
+
     }
 
     @Override
@@ -97,11 +111,25 @@ public class NavigationDrawerFragment extends Fragment {
 
         mPageTitles = getResources().getStringArray(R.array.menu_array);
 
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                mPageTitles));
+        List<HashMap<String, String>> mList = new ArrayList<HashMap<String, String>>();
+
+        String[] from = {ITEM_MENU_ICON, ITEM_MENU_TITLE, COUNT};
+
+        int[] to = {R.id.menu_item_icon, R.id.menu_item_title, R.id.count};
+
+        for (int i = 0; i < mPageTitles.length; i++) {
+            HashMap<String, String> hm = new HashMap<String, String>();
+            hm.put(ITEM_MENU_TITLE, mPageTitles[i]);
+            hm.put(COUNT, " ");
+            hm.put(ITEM_MENU_ICON, Integer.toString(mItemsIcons[i]));
+            mList.add(hm);
+        }
+
+        SimpleAdapter mAdapter = new SimpleAdapter(getActionBar().getThemedContext(), mList,
+                R.layout.fragment_main, from, to);
+
+        mDrawerListView.setAdapter(mAdapter);
+
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }
