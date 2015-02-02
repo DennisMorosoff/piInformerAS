@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
+    android:background="?android:attr/activatedBackgroundIndicator"
     tools:context=".MainActivity$PlaceholderFragment">
 
     <!-- Иконка элемента меню, берётся из папки drawable. Необходимо создать копии иконки разных размеров для всех разрешений экрана -->
@@ -22,7 +23,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@id/menu_item_icon"
-        android:background="?android:attr/activatedBackgroundIndicator"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:paddingLeft="16dp"
