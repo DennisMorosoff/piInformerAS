@@ -23,10 +23,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="29577223-11a1-4ef4-bff7-b2ff662a944a" name="Default" comment="#6 Реализована кнопка &quot;Сайт&quot;">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/ru/sfu/pi/piinformer/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/ru/sfu/pi/piinformer/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/ru/sfu/pi/piinformer/NavigationDrawerFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/ru/sfu/pi/piinformer/NavigationDrawerFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values-ru/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values-ru/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="piInformer.iws" />
@@ -1055,7 +1051,11 @@
       <created>1422855640917</created>
       <updated>1422855640917</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="#6 Реализована кнопка &quot;Сайт&quot;">
+      <created>1422859300853</created>
+      <updated>1422859300854</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
