@@ -63,9 +63,44 @@ public class MainActivity extends ActionBarActivity
 
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position))
-                .commit();
+
+        switch (position) {
+            case 0 /* Новости */:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PlaceholderFragment.newInstance(position))
+                        .commit();
+                break;
+            case 1 /* Расписание */:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PlaceholderFragment.newInstance(position))
+                        .commit();
+                break;
+            case 2 /* Радио */:
+
+                break;
+            case 3 /* Абитуриенту */:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PlaceholderFragment.newInstance(position))
+                        .commit();
+                break;
+            case 4 /* Структура */:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PlaceholderFragment.newInstance(position))
+                        .commit();
+                break;
+            case 5 /* Сайт */:
+
+                break;
+            case 6 /* Настройки */:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PreferencesPageFragment.newInstance(" ", " "))
+                        .commit();
+                break;
+            default /* Выбран несуществующий элемент меню */:
+                Toast.makeText(this, R.string.menu_selection_error,
+                        Toast.LENGTH_LONG).show();
+                break;
+        }
 
         Log.d(LOCATE, "onNavigationDrawerItemSelected finish");
 
