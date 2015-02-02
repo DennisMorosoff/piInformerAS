@@ -10,6 +10,16 @@
         <item>Настройки</item>
     </string-array>
 
+    <string-array name="menu_array_description">
+        <item>На этой странице будут отображаться новости из паблика Вконтакте</item>
+        <item>На этой странице будет отображаться актуальное расписание занятий</item>
+        <item>radio</item>
+        <item>На этой странице будут отображаться материалы для абитуриентов</item>
+        <item>На этой странице можно будет посмотреть структуру ВУЗа</item>
+        <item>site</item>
+        <item>prefs</item>
+    </string-array>
+
     <string name="app_name">Информер ПИ СФУ</string>
     <string name="navigation_drawer_open">Открыть боковое меню</string>
     <string name="navigation_drawer_close">Закрыть боковое меню</string>

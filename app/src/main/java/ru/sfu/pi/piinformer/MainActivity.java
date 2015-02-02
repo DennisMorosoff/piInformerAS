@@ -67,12 +67,12 @@ public class MainActivity extends ActionBarActivity
         switch (position) {
             case 0 /* Новости */:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(position))
+                        .replace(R.id.container, MainPageFragment.newInstance(position))
                         .commit();
                 break;
             case 1 /* Расписание */:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(position))
+                        .replace(R.id.container, MainPageFragment.newInstance(position))
                         .commit();
                 break;
             case 2 /* Радио */:
@@ -80,16 +80,27 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 3 /* Абитуриенту */:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(position))
+                        .replace(R.id.container, MainPageFragment.newInstance(position))
                         .commit();
                 break;
             case 4 /* Структура */:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(position))
+                        .replace(R.id.container, MainPageFragment.newInstance(position))
                         .commit();
                 break;
             case 5 /* Сайт */:
-
+                // создаём намерение для вызова поиска в интернете информации об институте
+                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                // пока что выводит только результат запроса
+                // "Политехнический институт СФУ"
+                intent.putExtra(SearchManager.QUERY, "Политехнический институт СФУ");
+                // запускаем браузер, выводим результат поиска
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, R.string.app_not_available,
+                            Toast.LENGTH_LONG).show();
+                }
                 break;
             case 6 /* Настройки */:
                 fragmentManager.beginTransaction()
@@ -127,18 +138,7 @@ public class MainActivity extends ActionBarActivity
 
                 break;
             case 5 /* Сайт */:
-                // создаём намерение для вызова поиска в интернете информации об институте
-                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-                // пока что выводит только результат запроса
-                // "Политехнический институт СФУ"
-                intent.putExtra(SearchManager.QUERY, "Политехнический институт СФУ");
-                // запускаем браузер, выводим результат поиска
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, R.string.app_not_available,
-                            Toast.LENGTH_LONG).show();
-                }
+
                 break;
             case 6 /* Настройки */:
 

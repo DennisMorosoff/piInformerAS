@@ -5,4 +5,17 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <!-- Стиль текста, отображаемой загрушки на команды бокового меню. -->
+    <style name="StubText" parent="@android:style/TextAppearance.Medium">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/button_material_dark</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:color">@color/abc_primary_text_material_dark</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
 </resources>
