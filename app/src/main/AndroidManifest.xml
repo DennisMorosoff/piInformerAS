@@ -1,21 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.sfu.pi.piinformer" >
+    package="ru.sfu.pi.piinformer">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".RadioService"
+            android:exported="false"></service>
+
+        <service
+            android:name=".MusicService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ru.sfu.pi.piinformer.action.TOGGLE_PLAYBACK" />
+                <action android:name="ru.sfu.pi.piinformer.action.PLAY" />
+                <action android:name="ru.sfu.pi.piinformer.action.PAUSE" />
+                <action android:name="ru.sfu.pi.piinformer.action.SKIP" />
+                <action android:name="ru.sfu.pi.piinformer.action.REWIND" />
+                <action android:name="ru.sfu.pi.piinformer.action.STOP" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="ru.sfu.pi.piinformer.action.URL" />
+                <data android:scheme="http" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".MusicIntentReceiver">
+            <intent-filter>
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+
     </application>
 
 </manifest>

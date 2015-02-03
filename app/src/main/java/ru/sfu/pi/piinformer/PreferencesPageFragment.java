@@ -36,7 +36,7 @@ public class PreferencesPageFragment extends Fragment {
 
     public PreferencesPageFragment() {
 
-        Log.d(LOCATE, "PreferencesPageFragment start");
+        Log.d(LOCATE, "PreferencesPageFragment starts");
 
         // для подклассов фрагмента нужен обязательный конструктор, хотя бы
         // даже пустой

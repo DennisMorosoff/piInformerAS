@@ -31,6 +31,9 @@
     </string-array>
 
     <string name="app_name">piInformer</string>
+    <string name="pi_radio">PiFm radio</string>
+
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
@@ -38,5 +41,9 @@
     <string name="imgDescription">Image Description</string>
     <string name="app_not_available">Sorry, browsers are not available</string>
     <string name="menu_selection_error">Internal error while selecting the item of navigation drawer</string>
+    <string name="radio_start_error">Возникла ошибка при запуске радио, несуществющее состояние радио</string>
+    <string name="stream_playing"> (playing)</string>
+    <string name="stream_loading"> (loading)</string>
+    <string name="stream_pausing"> (pausing)</string>
 
 </resources>

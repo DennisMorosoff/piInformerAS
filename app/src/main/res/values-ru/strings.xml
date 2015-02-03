@@ -3,8 +3,8 @@
     <string-array name="menu_array">
         <item>Новости</item>
         <item>Расписание</item>
-        <item>Радио</item>
-        <item>Абитуриенту</item>
+        <item>Запустить радио</item>
+        <item>Остановить радио</item>
         <item>Структура</item>
         <item>Сайт</item>
         <item>Настройки</item>
@@ -28,4 +28,10 @@
     <string name="imgDescription">Какая-то картинка</string>
     <string name="app_not_available">Извините, браузеры недоступны</string>
     <string name="menu_selection_error">Внутренняя ошибка при выборе пунка бокового меню</string>
+    <string name="radio_start_error">Возникла ошибка при запуске радио, несуществющее состояние радио</string>
+    <string name="pi_radio">PiFm-радио</string>
+    <string name="stream_playing"> (играет)</string>
+    <string name="stream_loading"> (загружается)</string>
+    <string name="stream_pausing"> (на паузе)</string>
+
 </resources>

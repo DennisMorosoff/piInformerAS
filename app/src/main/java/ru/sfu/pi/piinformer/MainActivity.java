@@ -8,7 +8,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,6 +60,17 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+            case KeyEvent.KEYCODE_HEADSETHOOK:
+                startService(new Intent(MusicService.ACTION_TOGGLE_PLAYBACK));
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public void onNavigationDrawerItemSelected(int position) {
 
         Log.d(LOCATE, "onNavigationDrawerItemSelected starts, position: " + position);
@@ -66,29 +80,110 @@ public class MainActivity extends ActionBarActivity
 
         switch (position) {
             case 0 /* Новости */:
+
+                Log.d(LOCATE, "Выбран нулевой элемент бокового меню starts");
+
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, MainPageFragment.newInstance(position))
                         .commit();
-                break;
-            case 1 /* Расписание */:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, MainPageFragment.newInstance(position))
-                        .commit();
-                break;
-            case 2 /* Радио */:
+
+                Log.d(LOCATE, "Выбран нулевой элемент бокового меню finish");
 
                 break;
-            case 3 /* Абитуриенту */:
+            case 1 /* Расписание */:
+
+                Log.d(LOCATE, "Выбран первый элемент бокового меню");
+
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, MainPageFragment.newInstance(position))
                         .commit();
+
+                Log.d(LOCATE, "Выбран первый элемент бокового меню");
+
+                break;
+            case 2 /* Запустить радио */:
+
+                Log.d(LOCATE, "Выбран второй элемент бокового меню");
+
+                PhoneStateListener phoneStateListener = new PhoneStateListener() {
+
+                    @Override
+                    public void onCallStateChanged(int state, String incomingNumber) {
+
+                        Log.d(LOCATE, "phoneStateListener.onCallStateChanged starts, state: " + state + ", incomingNumber: " + incomingNumber);
+                        //public static final int CALL_STATE_IDLE = 0;
+                        //public static final int CALL_STATE_RINGING = 1;
+                        //public static final int CALL_STATE_OFFHOOK = 2;
+
+                        super.onCallStateChanged(state, incomingNumber);
+
+                        switch (state) {
+                            case TelephonyManager.CALL_STATE_IDLE:
+
+                                Log.d("myLogs", "TelephonyManager.CALL_STATE_IDLE starts");
+
+                                startService(new Intent(MusicService.ACTION_PLAY));
+
+                                Log.d("myLogs", "TelephonyManager.CALL_STATE_IDLE finish");
+                                break;
+                            case TelephonyManager.CALL_STATE_RINGING:
+
+                                Log.d("myLogs", "TelephonyManager.CALL_STATE_RINGING starts");
+
+                                startService(new Intent(MusicService.ACTION_PAUSE));
+
+                                Log.d("myLogs", "TelephonyManager.CALL_STATE_RINGING finish");
+                                break;
+                            case TelephonyManager.CALL_STATE_OFFHOOK:
+
+                                Log.d("myLogs", "TelephonyManager.CALL_STATE_OFFHOOK starts");
+
+                                startService(new Intent(MusicService.ACTION_PAUSE));
+
+                                Log.d("myLogs", "TelephonyManager.CALL_STATE_OFFHOOK finish");
+                                break;
+                            default:/* Выбрано несуществующее состояние телефона */
+                                Toast.makeText(getApplicationContext(), R.string.radio_start_error,
+                                        Toast.LENGTH_LONG).show();
+                        }
+                    }
+                };
+
+                Log.d(LOCATE, "Получаем экземпляр TelephonyManager");
+
+                TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+
+                Log.d(LOCATE, "Экземпляр TelephonyManager получен: " + mgr + ", phoneStateListener: " + phoneStateListener);
+
+                if (mgr != null) {
+                    mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+                }
+
+                Log.d(LOCATE, "Состояние телефона прочитано: " + mgr.getCallState());
+
+                break;
+            case 3 /* Остановить радио */:
+                Log.d("myLogs", "Выбран третий элемент бокового меню");
+
+                startService(new Intent(MusicService.ACTION_STOP));
+
+                Log.d("myLogs", "Радио остановлено");
                 break;
             case 4 /* Структура */:
+
+                Log.d(LOCATE, "Выбран четвертый элемент бокового меню");
+
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, MainPageFragment.newInstance(position))
                         .commit();
+
+                Log.d(LOCATE, "Выбран четвертый элемент бокового меню");
+
                 break;
             case 5 /* Сайт */:
+
+                Log.d(LOCATE, "Выбран пятый элемент бокового меню");
+
                 // создаём намерение для вызова поиска в интернете информации об институте
                 Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
                 // пока что выводит только результат запроса
@@ -101,11 +196,20 @@ public class MainActivity extends ActionBarActivity
                     Toast.makeText(this, R.string.app_not_available,
                             Toast.LENGTH_LONG).show();
                 }
+
+                Log.d(LOCATE, "Выбран пятый элемент бокового меню");
+
                 break;
             case 6 /* Настройки */:
+
+                Log.d(LOCATE, "Выбран шестой элемент бокового меню");
+
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, PreferencesPageFragment.newInstance(" ", " "))
                         .commit();
+
+                Log.d(LOCATE, "Выбран шестой элемент бокового меню");
+
                 break;
             default /* Выбран несуществующий элемент меню */:
                 Toast.makeText(this, R.string.menu_selection_error,
@@ -115,39 +219,12 @@ public class MainActivity extends ActionBarActivity
 
         Log.d(LOCATE, "onNavigationDrawerItemSelected finish");
 
+
     }
 
     public void onSectionAttached(int number) {
 
         Log.d(LOCATE, "onSectionAttached starts, number: " + number);
-
-        switch (number) {
-            case 0 /* Новости */:
-
-                break;
-            case 1 /* Расписание */:
-
-                break;
-            case 2 /* Радио */:
-
-                break;
-            case 3 /* Абитуриенту */:
-
-                break;
-            case 4 /* Структура */:
-
-                break;
-            case 5 /* Сайт */:
-
-                break;
-            case 6 /* Настройки */:
-
-                break;
-            default /* Выбран несуществующий элемент меню */:
-                Toast.makeText(this, R.string.menu_selection_error,
-                        Toast.LENGTH_LONG).show();
-                break;
-        }
 
         /* Массив заголовков страниц (меню) */
         String[] mPageTitles = getResources().getStringArray(R.array.menu_array);
