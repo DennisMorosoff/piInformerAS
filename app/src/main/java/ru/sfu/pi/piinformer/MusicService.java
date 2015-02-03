@@ -65,6 +65,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     public static final String ACTION_SKIP = "ru.sfu.pi.piinformer.action.SKIP";
     public static final String ACTION_REWIND = "ru.sfu.pi.piinformer.action.REWIND";
     public static final String ACTION_URL = "ru.sfu.pi.piinformer.action.URL";
+
     // The volume we set the media player to when we lose audio focus, but are allowed to reduce
     // the volume instead of stopping playback.
     public static final float DUCK_VOLUME = 0.1f;
@@ -91,7 +92,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     // why did we pause? (only relevant if mState == State.Paused)
     PauseReason mPauseReason = PauseReason.UserRequest;
 
-    ;
     AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
     // title of the song we are currently playing
     String mStreamTitle = null;
@@ -174,6 +174,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Log.d(MainActivity.LOCATE, "MusicService.onStartCommand starts, intent.getAction(): " + intent.getAction());
+
         String action = intent.getAction();
         if (action.equals(ACTION_TOGGLE_PLAYBACK)) processTogglePlaybackRequest();
         else if (action.equals(ACTION_PLAY)) processPlayRequest();
@@ -182,6 +185,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         else if (action.equals(ACTION_STOP)) processStopRequest();
         else if (action.equals(ACTION_REWIND)) processRewindRequest();
         else if (action.equals(ACTION_URL)) processAddRequest(intent);
+
+        sendBroadcast(intent);
 
         return START_NOT_STICKY; // Means we started the service, but don't want it to
         // restart in case it's killed.

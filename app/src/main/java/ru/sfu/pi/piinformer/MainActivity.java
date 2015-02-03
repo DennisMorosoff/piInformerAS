@@ -2,7 +2,10 @@ package ru.sfu.pi.piinformer;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -24,8 +27,10 @@ import android.widget.Toast;
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private static final String LOCATE = MainActivity.class.getSimpleName();
-
+    public static final String LOCATE = MainActivity.class.getSimpleName();
+    public static final String myLogs = "myLogs";
+    Intent lastRadioIntent = null;
+    BroadcastReceiver br;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      * Фрагмент, управляющий поведением, взаимодействием и отображением бокового меню.
@@ -40,7 +45,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d(LOCATE, "onCreate starts, savedInstanceState: " + savedInstanceState);
+        Log.d(myLogs, "onCreate starts, savedInstanceState: " + savedInstanceState);
 
         super.onCreate(savedInstanceState);
 
@@ -56,7 +61,52 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        br = new BroadcastReceiver() {
+            // действия при получении сообщений
+            public void onReceive(Context context, Intent intent) {
+
+                Log.d(LOCATE, "br.onReceive starts, intent.getAction(): " + intent.getAction());
+
+                refreshNavigationDrawerAdapter(intent);
+
+                lastRadioIntent = intent;
+
+            }
+        };
+
+        // создаем фильтр для BroadcastReceiver
+        IntentFilter intFilt = new IntentFilter();
+        intFilt.addAction(MusicService.ACTION_PLAY);
+        intFilt.addAction(MusicService.ACTION_PAUSE);
+        intFilt.addAction(MusicService.ACTION_STOP);
+
+        // регистрируем (включаем) BroadcastReceiver
+        registerReceiver(br, intFilt);
+
         Log.d(LOCATE, "onCreate finish");
+    }
+
+    private void refreshNavigationDrawerAdapter(Intent intent) {
+
+        Log.d(LOCATE, "refreshNavigationDrawerAdapter starts, intent.getAction(): " + intent.getAction());
+
+        String action = intent.getAction();
+
+        if (action.equals(MusicService.ACTION_PLAY))
+            mNavigationDrawerFragment.mDrawerListView.setAdapter(mNavigationDrawerFragment.createAdapter(NavigationDrawerFragment.mItemsIconsPause));
+
+        if (action.equals(MusicService.ACTION_PAUSE))
+            mNavigationDrawerFragment.mDrawerListView.setAdapter(mNavigationDrawerFragment.createAdapter(NavigationDrawerFragment.mItemsIconsPlay));
+
+        if (action.equals(MusicService.ACTION_STOP))
+            mNavigationDrawerFragment.mDrawerListView.setAdapter(mNavigationDrawerFragment.createAdapter(NavigationDrawerFragment.mItemsIconsPlay));
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(br);
+        super.onDestroy();
     }
 
     @Override
@@ -87,8 +137,6 @@ public class MainActivity extends ActionBarActivity
                         .replace(R.id.container, MainPageFragment.newInstance(position))
                         .commit();
 
-                Log.d(LOCATE, "Выбран нулевой элемент бокового меню finish");
-
                 break;
             case 1 /* Расписание */:
 
@@ -98,12 +146,16 @@ public class MainActivity extends ActionBarActivity
                         .replace(R.id.container, MainPageFragment.newInstance(position))
                         .commit();
 
-                Log.d(LOCATE, "Выбран первый элемент бокового меню");
-
                 break;
             case 2 /* Запустить радио */:
 
-                Log.d(LOCATE, "Выбран второй элемент бокового меню");
+                Log.d(myLogs, "Выбран второй элемент бокового меню");
+
+                Log.d(myLogs, "Выбран второй элемент бокового меню, lastRadioIntent: " + lastRadioIntent);
+
+
+
+
 
                 PhoneStateListener phoneStateListener = new PhoneStateListener() {
 
@@ -120,27 +172,35 @@ public class MainActivity extends ActionBarActivity
                         switch (state) {
                             case TelephonyManager.CALL_STATE_IDLE:
 
-                                Log.d("myLogs", "TelephonyManager.CALL_STATE_IDLE starts");
+                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_IDLE starts");
 
-                                startService(new Intent(MusicService.ACTION_PLAY));
+                                if (lastRadioIntent == null) {
+                                    startService(new Intent(MusicService.ACTION_PLAY));
+                                } else if (!lastRadioIntent.getAction().equals(MusicService.ACTION_PLAY)) {
+                                    Log.d(myLogs, "Второе условие, lastRadioIntent.getAction(): " + lastRadioIntent.getAction());
+                                    startService(new Intent(MusicService.ACTION_PLAY));
+                                } else if (lastRadioIntent.getAction().equals(MusicService.ACTION_PLAY)) {
+                                    Log.d(myLogs, "Третье условие, lastRadioIntent.getAction(): " + lastRadioIntent.getAction());
+                                    startService(new Intent(MusicService.ACTION_PAUSE));
+                                }
 
-                                Log.d("myLogs", "TelephonyManager.CALL_STATE_IDLE finish");
+                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_IDLE finish");
                                 break;
                             case TelephonyManager.CALL_STATE_RINGING:
 
-                                Log.d("myLogs", "TelephonyManager.CALL_STATE_RINGING starts");
+                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_RINGING starts");
 
                                 startService(new Intent(MusicService.ACTION_PAUSE));
 
-                                Log.d("myLogs", "TelephonyManager.CALL_STATE_RINGING finish");
+                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_RINGING finish");
                                 break;
                             case TelephonyManager.CALL_STATE_OFFHOOK:
 
-                                Log.d("myLogs", "TelephonyManager.CALL_STATE_OFFHOOK starts");
+                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_OFFHOOK starts");
 
                                 startService(new Intent(MusicService.ACTION_PAUSE));
 
-                                Log.d("myLogs", "TelephonyManager.CALL_STATE_OFFHOOK finish");
+                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_OFFHOOK finish");
                                 break;
                             default:/* Выбрано несуществующее состояние телефона */
                                 Toast.makeText(getApplicationContext(), R.string.radio_start_error,
@@ -163,11 +223,11 @@ public class MainActivity extends ActionBarActivity
 
                 break;
             case 3 /* Остановить радио */:
-                Log.d("myLogs", "Выбран третий элемент бокового меню");
+                Log.d(LOCATE, "Выбран третий элемент бокового меню");
 
                 startService(new Intent(MusicService.ACTION_STOP));
 
-                Log.d("myLogs", "Радио остановлено");
+                Log.d(LOCATE, "Радио остановлено");
                 break;
             case 4 /* Структура */:
 
@@ -176,8 +236,6 @@ public class MainActivity extends ActionBarActivity
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, MainPageFragment.newInstance(position))
                         .commit();
-
-                Log.d(LOCATE, "Выбран четвертый элемент бокового меню");
 
                 break;
             case 5 /* Сайт */:
@@ -197,8 +255,6 @@ public class MainActivity extends ActionBarActivity
                             Toast.LENGTH_LONG).show();
                 }
 
-                Log.d(LOCATE, "Выбран пятый элемент бокового меню");
-
                 break;
             case 6 /* Настройки */:
 
@@ -207,8 +263,6 @@ public class MainActivity extends ActionBarActivity
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, PreferencesPageFragment.newInstance(" ", " "))
                         .commit();
-
-                Log.d(LOCATE, "Выбран шестой элемент бокового меню");
 
                 break;
             default /* Выбран несуществующий элемент меню */:

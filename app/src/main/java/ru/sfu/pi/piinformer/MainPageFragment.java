@@ -22,8 +22,6 @@ import android.widget.TextView;
  */
 public class MainPageFragment extends Fragment {
 
-    private static final String LOCATE = MainActivity.class.getSimpleName();
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM = "position";
@@ -65,7 +63,7 @@ public class MainPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d(LOCATE, "MainPageFragment.onCreateView starts");
+        Log.d(MainActivity.LOCATE, "MainPageFragment.onCreateView starts");
 
         // получаем указатель на корневой компонент слоя fragment_pages. В
         // данном случае это ImageView
@@ -81,7 +79,7 @@ public class MainPageFragment extends Fragment {
         // загружаем рисунок в компонент в отдельном потоке
         loadText(mPageText, mPageDescriptions[mParam]);
 
-        Log.d(LOCATE, "MainPageFragment.onCreateView finish");
+        Log.d(MainActivity.LOCATE, "MainPageFragment.onCreateView finish");
 
         return rootView;
     }

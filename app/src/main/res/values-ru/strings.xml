@@ -3,7 +3,7 @@
     <string-array name="menu_array">
         <item>Новости</item>
         <item>Расписание</item>
-        <item>Запустить радио</item>
+        <item>Радио</item>
         <item>Остановить радио</item>
         <item>Структура</item>
         <item>Сайт</item>

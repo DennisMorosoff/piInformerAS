@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -34,11 +33,22 @@ import java.util.List;
  */
 public class NavigationDrawerFragment extends Fragment {
 
+    public final static int[] mItemsIconsPlay = new int[]{R.drawable.ic_action_event,
+            R.drawable.ic_action_go_to_today, R.drawable.ic_action_play,
+            R.drawable.ic_action_stop, R.drawable.ic_action_group,
+            R.drawable.ic_action_web_site, R.drawable.ic_action_settings};
+    public final static int[] mItemsIconsPause = new int[]{R.drawable.ic_action_event,
+            R.drawable.ic_action_go_to_today, R.drawable.ic_action_pause,
+            R.drawable.ic_action_stop, R.drawable.ic_action_group,
+            R.drawable.ic_action_web_site, R.drawable.ic_action_settings};
+    public final static int[] mItemsIconsStop = new int[]{R.drawable.ic_action_event,
+            R.drawable.ic_action_go_to_today, R.drawable.ic_action_stop,
+            R.drawable.ic_action_stop, R.drawable.ic_action_group,
+            R.drawable.ic_action_web_site, R.drawable.ic_action_settings};
     /**
      * Remember the position of the selected item.
      */
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-
     /**
      * Per the design guidelines, you should show the drawer on launch until the user manually
      * expands it. This shared preference tracks this.
@@ -47,11 +57,7 @@ public class NavigationDrawerFragment extends Fragment {
     final private String ITEM_MENU_TITLE = "title";
     final private String ITEM_MENU_ICON = "icon";
     final private String COUNT = "count";
-
-    int[] mItemsIcons = new int[]{R.drawable.ic_action_event,
-            R.drawable.ic_action_go_to_today, R.drawable.ic_action_play,
-            R.drawable.ic_action_stop, R.drawable.ic_action_group,
-            R.drawable.ic_action_web_site, R.drawable.ic_action_settings};
+    public ListView mDrawerListView;
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
@@ -61,7 +67,6 @@ public class NavigationDrawerFragment extends Fragment {
      */
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerListView;
     private View mFragmentContainerView;
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -109,6 +114,14 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
+        mDrawerListView.setAdapter(createAdapter(mItemsIconsPlay));
+
+        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+        return mDrawerListView;
+    }
+
+    public SimpleAdapter createAdapter(int[] mItemsIcons) {
+
         /* Массив заголовков страниц (меню) */
         String[] mPageTitles = getResources().getStringArray(R.array.menu_array);
 
@@ -129,11 +142,9 @@ public class NavigationDrawerFragment extends Fragment {
         SimpleAdapter mAdapter = new SimpleAdapter(getActionBar().getThemedContext(), mList,
                 R.layout.fragment_main, from, to);
 
-        mDrawerListView.setAdapter(mAdapter);
-
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return mDrawerListView;
+        return mAdapter;
     }
+
 
     public boolean isDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
