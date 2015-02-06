@@ -60,7 +60,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     public static final String ACTION_TOGGLE_PLAYBACK =
             "ru.sfu.pi.piinformer.action.TOGGLE_PLAYBACK";
     public static final String ACTION_PLAY = "ru.sfu.pi.piinformer.action.PLAY";
-    public static final String ACTION_PAUSE = "ru.sfu.pi.piinformer.action.PAUSE";
+    public static final String ACTION_USER_PAUSE = "ru.sfu.pi.piinformer.action.USER_PAUSE";
+    public static final String ACTION_PHONE_PAUSE = "ru.sfu.pi.piinformer.action.PHONE_PAUSE";
     public static final String ACTION_STOP = "ru.sfu.pi.piinformer.action.STOP";
     public static final String ACTION_SKIP = "ru.sfu.pi.piinformer.action.SKIP";
     public static final String ACTION_REWIND = "ru.sfu.pi.piinformer.action.REWIND";
@@ -180,7 +181,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         String action = intent.getAction();
         if (action.equals(ACTION_TOGGLE_PLAYBACK)) processTogglePlaybackRequest();
         else if (action.equals(ACTION_PLAY)) processPlayRequest();
-        else if (action.equals(ACTION_PAUSE)) processPauseRequest();
+        else if (action.equals(ACTION_USER_PAUSE)) processPauseRequest();
+        else if (action.equals(ACTION_PHONE_PAUSE)) processPauseRequest();
         else if (action.equals(ACTION_SKIP)) processSkipRequest();
         else if (action.equals(ACTION_STOP)) processStopRequest();
         else if (action.equals(ACTION_REWIND)) processRewindRequest();

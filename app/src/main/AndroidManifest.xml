@@ -26,7 +26,8 @@
             <intent-filter>
                 <action android:name="ru.sfu.pi.piinformer.action.TOGGLE_PLAYBACK" />
                 <action android:name="ru.sfu.pi.piinformer.action.PLAY" />
-                <action android:name="ru.sfu.pi.piinformer.action.PAUSE" />
+                <action android:name="ru.sfu.pi.piinformer.action.USER_PAUSE" />
+                <action android:name="ru.sfu.pi.piinformer.action.PHONE_PAUSE" />
                 <action android:name="ru.sfu.pi.piinformer.action.SKIP" />
                 <action android:name="ru.sfu.pi.piinformer.action.REWIND" />
                 <action android:name="ru.sfu.pi.piinformer.action.STOP" />

@@ -79,6 +79,74 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        PhoneStateListener phoneStateListener = new PhoneStateListener() {
+
+            @Override
+            public void onCallStateChanged(int state, String incomingNumber) {
+
+                Log.d(LOCATE, "phoneStateListener.onCallStateChanged starts, state: " + state + ", incomingNumber: " + incomingNumber);
+                //public static final int CALL_STATE_IDLE = 0;
+                //public static final int CALL_STATE_RINGING = 1;
+                //public static final int CALL_STATE_OFFHOOK = 2;
+
+                super.onCallStateChanged(state, incomingNumber);
+
+                switch (state) {
+                    case TelephonyManager.CALL_STATE_IDLE:
+
+                        Log.d(LOCATE, "TelephonyManager.CALL_STATE_IDLE starts");
+
+                        if (lastRadioIntent == null) {
+                            Log.d(myLogs, "Первое условие, lastRadioIntent: " + lastRadioIntent);
+                        } else if (lastRadioIntent.getAction().equals(MusicService.ACTION_PHONE_PAUSE)) {
+                            Log.d(myLogs, "Второе условие, lastRadioIntent.getAction(): " + lastRadioIntent.getAction());
+                            startService(new Intent(MusicService.ACTION_PLAY));
+                        } else if (lastRadioIntent.getAction().equals(MusicService.ACTION_USER_PAUSE)) {
+                            Log.d(myLogs, "Третье условие, lastRadioIntent.getAction(): " + lastRadioIntent.getAction());
+                        } else if (lastRadioIntent.getAction().equals(MusicService.ACTION_PLAY)) {
+                            Log.d(myLogs, "Четвертое условие, lastRadioIntent.getAction(): " + lastRadioIntent.getAction());
+                        }
+                        Log.d(LOCATE, "TelephonyManager.CALL_STATE_IDLE finish");
+                        break;
+                    case TelephonyManager.CALL_STATE_RINGING:
+
+                        Log.d(LOCATE, "TelephonyManager.CALL_STATE_RINGING starts");
+
+                        if (lastRadioIntent.getAction().equals(MusicService.ACTION_PLAY)) {
+                            startService(new Intent(MusicService.ACTION_PHONE_PAUSE));
+                        }
+
+                        Log.d(LOCATE, "TelephonyManager.CALL_STATE_RINGING finish");
+                        break;
+                    case TelephonyManager.CALL_STATE_OFFHOOK:
+
+                        Log.d(LOCATE, "TelephonyManager.CALL_STATE_OFFHOOK starts");
+
+                        if (lastRadioIntent.getAction().equals(MusicService.ACTION_PLAY)) {
+                            startService(new Intent(MusicService.ACTION_PHONE_PAUSE));
+                        }
+
+                        Log.d(LOCATE, "TelephonyManager.CALL_STATE_OFFHOOK finish");
+                        break;
+                    default:/* Выбрано несуществующее состояние телефона */
+                        Toast.makeText(getApplicationContext(), R.string.radio_start_error,
+                                Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+
+        Log.d(LOCATE, "Получаем экземпляр TelephonyManager");
+
+        TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+
+        Log.d(LOCATE, "Экземпляр TelephonyManager получен: " + mgr + ", phoneStateListener: " + phoneStateListener);
+
+        if (mgr != null) {
+            mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
+
+        Log.d(LOCATE, "Состояние телефона прочитано: " + mgr.getCallState());
+
         br = new BroadcastReceiver() {
             // действия при получении сообщений
             public void onReceive(Context context, Intent intent) {
@@ -95,7 +163,8 @@ public class MainActivity extends ActionBarActivity
         // создаем фильтр для BroadcastReceiver
         IntentFilter intFilt = new IntentFilter();
         intFilt.addAction(MusicService.ACTION_PLAY);
-        intFilt.addAction(MusicService.ACTION_PAUSE);
+        intFilt.addAction(MusicService.ACTION_USER_PAUSE);
+        intFilt.addAction(MusicService.ACTION_PHONE_PAUSE);
         intFilt.addAction(MusicService.ACTION_STOP);
 
         // регистрируем (включаем) BroadcastReceiver
@@ -189,7 +258,10 @@ public class MainActivity extends ActionBarActivity
         if (action.equals(MusicService.ACTION_PLAY))
             mNavigationDrawerFragment.mDrawerListView.setAdapter(mNavigationDrawerFragment.createAdapter(NavigationDrawerFragment.mItemsIconsPause));
 
-        if (action.equals(MusicService.ACTION_PAUSE))
+        if (action.equals(MusicService.ACTION_USER_PAUSE))
+            mNavigationDrawerFragment.mDrawerListView.setAdapter(mNavigationDrawerFragment.createAdapter(NavigationDrawerFragment.mItemsIconsPlay));
+
+        if (action.equals(MusicService.ACTION_PHONE_PAUSE))
             mNavigationDrawerFragment.mDrawerListView.setAdapter(mNavigationDrawerFragment.createAdapter(NavigationDrawerFragment.mItemsIconsPlay));
 
         if (action.equals(MusicService.ACTION_STOP))
@@ -246,69 +318,19 @@ public class MainActivity extends ActionBarActivity
                 Log.d(myLogs, "Выбран второй элемент бокового меню");
                 Log.d(myLogs, "Выбран второй элемент бокового меню, lastRadioIntent: " + lastRadioIntent);
 
-                PhoneStateListener phoneStateListener = new PhoneStateListener() {
-
-                    @Override
-                    public void onCallStateChanged(int state, String incomingNumber) {
-
-                        Log.d(LOCATE, "phoneStateListener.onCallStateChanged starts, state: " + state + ", incomingNumber: " + incomingNumber);
-                        //public static final int CALL_STATE_IDLE = 0;
-                        //public static final int CALL_STATE_RINGING = 1;
-                        //public static final int CALL_STATE_OFFHOOK = 2;
-
-                        super.onCallStateChanged(state, incomingNumber);
-
-                        switch (state) {
-                            case TelephonyManager.CALL_STATE_IDLE:
-
-                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_IDLE starts");
-
-                                if (lastRadioIntent == null) {
-                                    startService(new Intent(MusicService.ACTION_PLAY));
-                                } else if (!lastRadioIntent.getAction().equals(MusicService.ACTION_PLAY)) {
-                                    Log.d(myLogs, "Второе условие, lastRadioIntent.getAction(): " + lastRadioIntent.getAction());
-                                    startService(new Intent(MusicService.ACTION_PLAY));
-                                } else if (lastRadioIntent.getAction().equals(MusicService.ACTION_PLAY)) {
-                                    Log.d(myLogs, "Третье условие, lastRadioIntent.getAction(): " + lastRadioIntent.getAction());
-                                    startService(new Intent(MusicService.ACTION_PAUSE));
-                                }
-
-                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_IDLE finish");
-                                break;
-                            case TelephonyManager.CALL_STATE_RINGING:
-
-                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_RINGING starts");
-
-                                startService(new Intent(MusicService.ACTION_PAUSE));
-
-                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_RINGING finish");
-                                break;
-                            case TelephonyManager.CALL_STATE_OFFHOOK:
-
-                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_OFFHOOK starts");
-
-                                startService(new Intent(MusicService.ACTION_PAUSE));
-
-                                Log.d(LOCATE, "TelephonyManager.CALL_STATE_OFFHOOK finish");
-                                break;
-                            default:/* Выбрано несуществующее состояние телефона */
-                                Toast.makeText(getApplicationContext(), R.string.radio_start_error,
-                                        Toast.LENGTH_LONG).show();
-                        }
-                    }
-                };
-
-                Log.d(LOCATE, "Получаем экземпляр TelephonyManager");
-
-                TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-
-                Log.d(LOCATE, "Экземпляр TelephonyManager получен: " + mgr + ", phoneStateListener: " + phoneStateListener);
-
-                if (mgr != null) {
-                    mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+                if (lastRadioIntent == null) {
+                    Log.d(myLogs, "Первое условие, lastRadioIntent: " + lastRadioIntent);
+                    startService(new Intent(MusicService.ACTION_PLAY));
+                } else if (lastRadioIntent.getAction().equals(MusicService.ACTION_PHONE_PAUSE)) {
+                    Log.d(myLogs, "Второе условие, lastRadioIntent.getAction(): " + lastRadioIntent.getAction());
+                    ;
+                } else if (lastRadioIntent.getAction().equals(MusicService.ACTION_USER_PAUSE)) {
+                    Log.d(myLogs, "Третье условие, lastRadioIntent.getAction(): " + lastRadioIntent.getAction());
+                    startService(new Intent(MusicService.ACTION_PLAY));
+                } else if (lastRadioIntent.getAction().equals(MusicService.ACTION_PLAY)) {
+                    Log.d(myLogs, "Четвертое условие, lastRadioIntent.getAction(): " + lastRadioIntent.getAction());
+                    startService(new Intent(MusicService.ACTION_USER_PAUSE));
                 }
-
-                Log.d(LOCATE, "Состояние телефона прочитано: " + mgr.getCallState());
 
                 break;
             case 3 /* Остановить радио */:
