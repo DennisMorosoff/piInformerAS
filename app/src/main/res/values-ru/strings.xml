@@ -10,6 +10,16 @@
         <item>Настройки</item>
     </string-array>
 
+    <string-array name="menu_array_images">
+        <item>news</item>
+        <item>rasp</item>
+        <item>radio</item>
+        <item>abit</item>
+        <item>struct</item>
+        <item>site</item>
+        <item>prefs</item>
+    </string-array>
+
     <string-array name="menu_array_description">
         <item>На этой странице будут отображаться новости из паблика Вконтакте</item>
         <item>На этой странице будет отображаться актуальное расписание занятий</item>
@@ -33,5 +43,11 @@
     <string name="stream_playing"> (играет)</string>
     <string name="stream_loading"> (загружается)</string>
     <string name="stream_pausing"> (на паузе)</string>
+    <string name="SendingLogsReauest">Хотите отправить мне на почту информацию о только что возникшей ошибке?</string>
+    <string name="SendingForceCloseRequest">Программа была закрыта принудительно, хотите отправить мне на почту информацию о произошедшем?</string>
+    <string name="Yes">Да</string>
+    <string name="No">Нет</string>
+    <string name="Warning">Предупреждение</string>
+    <string name="OK">OK</string>
 
 </resources>

@@ -1,11 +1,16 @@
 package ru.sfu.pi.piinformer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -23,14 +28,23 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
+import org.focuser.sendmelogs.LogCollector;
+
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, android.content.DialogInterface.OnClickListener {
 
     public static final String LOCATE = MainActivity.class.getSimpleName();
     public static final String myLogs = "myLogs";
+    public static final int DIALOG_SEND_LOG = 345350;
+    protected static final int DIALOG_PROGRESS_COLLECTING_LOG = 3255;
+    protected static final int DIALOG_FAILED_TO_COLLECT_LOGS = 3535122;
+    private static final int DIALOG_REPORT_FORCE_CLOSE = 3535788;
     Intent lastRadioIntent = null;
     BroadcastReceiver br;
+    private View mBtnCrashMe;
+    private LogCollector mLogCollector;
+    private View mBtnSendLog;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      * Фрагмент, управляющий поведением, взаимодействием и отображением бокового меню.
@@ -53,6 +67,10 @@ public class MainActivity extends ActionBarActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+
+        mLogCollector = new LogCollector(this);
+        CheckForceCloseTask task = new CheckForceCloseTask();
+        task.execute();
 
         mTitle = getTitle();
 
@@ -84,6 +102,82 @@ public class MainActivity extends ActionBarActivity
         registerReceiver(br, intFilt);
 
         Log.d(LOCATE, "onCreate finish");
+    }
+
+    public void onClick(View v) {
+        if (v == mBtnCrashMe)
+            throwException();
+        else if (v == mBtnSendLog) {
+            showDialog(DIALOG_SEND_LOG);
+        }
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog = null;
+        switch (id) {
+            case DIALOG_SEND_LOG:
+            case DIALOG_REPORT_FORCE_CLOSE:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                String message;
+                if (id == DIALOG_SEND_LOG)
+                    message = getString(R.string.SendingLogsReauest);
+                else
+                    message = getString(R.string.SendingForceCloseRequest);
+                builder.setTitle(getString(R.string.Warning))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setMessage(message)
+                        .setPositiveButton(getString(R.string.Yes), this)
+                        .setNegativeButton(getString(R.string.No), this);
+                dialog = builder.create();
+                break;
+            case DIALOG_PROGRESS_COLLECTING_LOG:
+                ProgressDialog pd = new ProgressDialog(this);
+                pd.setTitle("Progress");
+                pd.setMessage("Collecting logs...");
+                pd.setIndeterminate(true);
+                dialog = pd;
+                break;
+            case DIALOG_FAILED_TO_COLLECT_LOGS:
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle("Error")
+                        .setMessage("Failed to collect logs.")
+                        .setNegativeButton(getString(R.string.OK), null);
+                dialog = builder.create();
+        }
+        return dialog;
+    }
+
+    public void onClick(DialogInterface dialog, int which) {
+        switch (which) {
+            case DialogInterface.BUTTON_POSITIVE:
+                new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... params) {
+                        return mLogCollector.collect();
+                    }
+
+                    @Override
+                    protected void onPreExecute() {
+                        showDialog(DIALOG_PROGRESS_COLLECTING_LOG);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean result) {
+                        dismissDialog(DIALOG_PROGRESS_COLLECTING_LOG);
+                        if (result)
+                            mLogCollector.sendLog("DennisMorosoff@gmail.com", "Error Log", "Preface\nPreface line 2");
+                        else
+                            showDialog(DIALOG_FAILED_TO_COLLECT_LOGS);
+                    }
+
+                }.execute();
+        }
+        dialog.dismiss();
+    }
+
+    private void throwException() {
+        throw new NullPointerException();
     }
 
     private void refreshNavigationDrawerAdapter(Intent intent) {
@@ -150,12 +244,7 @@ public class MainActivity extends ActionBarActivity
             case 2 /* Запустить радио */:
 
                 Log.d(myLogs, "Выбран второй элемент бокового меню");
-
                 Log.d(myLogs, "Выбран второй элемент бокового меню, lastRadioIntent: " + lastRadioIntent);
-
-
-
-
 
                 PhoneStateListener phoneStateListener = new PhoneStateListener() {
 
@@ -407,6 +496,21 @@ public class MainActivity extends ActionBarActivity
 
             Log.d(LOCATE, "onAttach finish");
 
+        }
+    }
+
+    class CheckForceCloseTask extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return mLogCollector.hasForceCloseHappened();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                showDialog(DIALOG_REPORT_FORCE_CLOSE);
+            } else
+                Toast.makeText(getApplicationContext(), "No force close detected.", Toast.LENGTH_LONG).show();
         }
     }
 

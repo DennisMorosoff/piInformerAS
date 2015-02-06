@@ -10,6 +10,7 @@
         <item>Сайт</item>
         <item>Настройки</item>
     </string-array>
+
     <string-array name="menu_array_images">
         <item>news</item>
         <item>rasp</item>
@@ -45,5 +46,11 @@
     <string name="stream_playing"> (playing)</string>
     <string name="stream_loading"> (loading)</string>
     <string name="stream_pausing"> (pausing)</string>
+    <string name="SendingLogsReauest">Do you want to send me your logs?</string>
+    <string name="SendingForceCloseRequest">It appears this app has been force-closed, do you want to report it to me?</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
+    <string name="Warning">Warning</string>
+    <string name="OK">OK</string>
 
 </resources>
